@@ -1,0 +1,14 @@
+apiVersion: k8s.nginx.org/v1
+kind: VirtualServer
+metadata:
+  name: nginx-plus-nap
+spec:
+  host: nginx.example.com
+  upstreams:
+  - name: nginx-plus-nap
+    service: nginx-plus-nap
+    port: 80
+  routes:
+  - path: /
+    action:
+      pass: nginx-plus-nap

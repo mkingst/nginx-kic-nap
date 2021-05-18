@@ -1,0 +1,84 @@
+apiVersion: appprotect.f5.com/v1beta1
+kind: APPolicy
+metadata:
+  name: nginx-policy
+  namespace: default
+spec:
+  policy:
+    name: nginx-policy
+    template:
+      name: POLICY_TEMPLATE_NGINX_BASE
+    applicationLanguage: utf-8
+    enforcementMode: blocking
+    signature-sets:
+    - name: Command Execution Signatures
+      alarm: true
+      block: true
+    - name: Cross Site Scripting Signatures
+      alarm: true
+      block: true
+    - name: SQL Injection Signatures
+      alarm: true
+      block: true 
+    signature-settings:
+      minimumAccuracyForAutoAddedSignatures: low
+    blocking-settings:
+      evasions:
+      - description: Apache whitespace
+        enabled: true
+      - description: Bad unescape
+        enabled: true
+      - description: Bare byte decoding
+        enabled: true
+      - description: Directory traversals
+        enabled: true
+      - description: IIS Unicode codepoints
+        enabled: true
+      - description: IIS backslashes
+        enabled: true
+      - description: Multiple decoding
+        enabled: true
+        maxDecodingPasses: 2
+      violations:
+      - name: VIOL_DATA_GUARD
+        alarm: true
+        block: false 
+      - name: VIOL_HTTP_PROTOCOL
+        alarm: true
+        block: true
+      - name: VIOL_FILETYPE
+        alarm: true
+        block: true
+      - name: VIOL_HEADER_METACHAR
+        alarm: true
+        block: true
+      - name: VIOL_EVASION
+        alarm: true
+        block: true
+      http-protocols:
+      - description: Header name with no header value
+        enabled: true
+    filetypes:
+    - name: "*"
+      type: wildcard
+      allowed: true
+      checkPostDataLength: false
+      postDataLength: 4096
+      checkRequestLength: false
+      requestLength: 8192
+      checkUrlLength: true
+      urlLength: 2048
+      checkQueryStringLength: true
+      queryStringLength: 2048
+      responseCheck: false
+    - name: bat
+      allowed: false
+    data-guard:
+      enabled: true
+      maskData: true 
+      creditCardNumbers: true
+      usSocialSecurityNumbers: true
+      enforcementMode: ignore-urls-in-list
+      enforcementUrls: []
+    general:
+      trustXff: true

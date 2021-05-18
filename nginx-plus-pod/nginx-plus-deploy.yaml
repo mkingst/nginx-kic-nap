@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nginx-plus-nap
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: nginx-plus-nap
+  template:
+    metadata:
+      labels:
+        app: nginx-plus-nap
+    spec:
+      containers:
+        - name: nginx-plus-nap
+          image: 'mkingst/nginx-plus-nap:latest'
+          ports:
+            - containerPort: 80
+              name: http

@@ -1,0 +1,95 @@
+## ----------------------------------------------------------------------------
+## ..:: ELK POD / Deployment ::..
+##-----------------------------------------------------------------------------
+## Run "sysctl -w vm.max_map_count=262144" on the nodes first
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk
+  namespace: default
+  labels:
+    app: elk
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elk
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: elk
+        version: v1
+    spec:
+      containers:
+      - env:
+        image: sebp/elk:742
+        imagePullPolicy: IfNotPresent
+        name: elk
+        ports:
+        - containerPort: 9200
+          protocol: TCP
+        - containerPort: 5601
+          protocol: TCP
+        - containerPort: 5144
+          protocol: TCP
+        volumeMounts:
+        - name: logstash-persistent-storage
+          mountPath: /etc/logstash/conf.d/
+      volumes:
+        - name: logstash-persistent-storage
+          hostPath:
+            path: /home/centos/dockerhost-storage/elk/
+
+---
+## ----------------------------------------------------------------------------
+## ..:: ELK Service Configuration ::..
+##-----------------------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-9200
+  namespace: default
+  labels:
+    app: elk
+spec:
+  type: ClusterIP
+  ports:
+  - name: elk-tcp-9200
+    port: 9200
+    protocol: TCP
+  selector:
+      app: elk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-5601
+  namespace: default
+  labels:
+    app: elk
+spec:
+  type: NodePort
+  ports:
+  - name: elk-tcp-5601
+    port: 5601
+    protocol: TCP
+  selector:
+      app: elk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-5144
+  namespace: default
+  labels:
+    app: elk
+spec:
+  type: ClusterIP
+  ports:
+  - name: elk-tcp-5144
+    port: 5144
+    protocol: TCP
+  selector:
+      app: elk
