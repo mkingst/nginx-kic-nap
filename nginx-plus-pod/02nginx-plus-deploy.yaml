@@ -22,7 +22,13 @@ spec:
           - name: nginx-config
             mountPath: /etc/nginx/conf.d/nginx-plus.conf
             subPath: nginx-plus.conf
+          - name: my-policy
+            mountPath: /etc/app_protect/conf/custom_policy.json
+            subPath: custom_policy.json
       volumes:
         - name: nginx-config
           configMap:
             name: nginx-config
+        - name: my-policy
+          configMap:
+            name: custom-policy
