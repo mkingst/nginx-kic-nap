@@ -1,0 +1,37 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-config
+  namespace: default
+data:
+  nginx-plus.conf: |-
+
+    resolver kube-dns.kube-system.svc.cluster.local valid=5s;
+
+    upstream online-boutique-frontend 
+    {
+    zone online-boutique 64k;
+    server frontend.default.svc.cluster.local:80 resolve;
+    }
+
+    server {
+        listen 80;
+        server_name nginx.example.com;
+        proxy_http_version 1.1;
+
+        app_protect_enable on;
+        app_protect_security_log_enable on;
+        app_protect_security_log "/etc/nginx/custom_log_format.json" syslog:server=10.105.238.128:5144;
+        app_protect_policy_file "/etc/app_protect/conf/NginxStrictPolicy.json";
+        #app_protect_policy_file "/etc/app_protect/conf/custom_policy.json";
+        #app_protect_security_log "/etc/app_protect/conf/default_logconf.json" syslog:server=10.105.238.128:5144;
+
+
+        location / {
+            client_max_body_size 0;
+            default_type text/html;
+            # set your backend here
+            proxy_pass http://online-boutique-frontend;
+            proxy_set_header Host $host;
+        }
+    }

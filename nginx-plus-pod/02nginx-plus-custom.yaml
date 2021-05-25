@@ -25,6 +25,9 @@ spec:
           - name: my-policy
             mountPath: /etc/app_protect/conf/custom_policy.json
             subPath: custom_policy.json
+          - name: default-logconf
+            mountPath: /etc/app_protect/conf/default_logconf.json
+            subPath: default_logconf.json
       volumes:
         - name: nginx-config
           configMap:
@@ -32,3 +35,6 @@ spec:
         - name: my-policy
           configMap:
             name: custom-policy
+        - name: default-logconf
+          configMap:
+            name: default-logconf

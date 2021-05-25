@@ -21,8 +21,9 @@ data:
 
         app_protect_enable on;
         app_protect_security_log_enable on;
-        app_protect_security_log "/etc/nginx/custom_log_format.json" syslog:server=10.105.238.128:5144;
-        app_protect_policy_file "/etc/app_protect/conf/NginxStrictPolicy.json";
+        app_protect_security_log "/etc/app_protect/conf/default_logconf.json" syslog:server=10.105.238.128:5144;
+        app_protect_policy_file "/etc/app_protect/conf/custom_policy.json";
+        
 
         location / {
             client_max_body_size 0;
