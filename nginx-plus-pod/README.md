@@ -144,3 +144,9 @@ The following are two examples:
 <code>
 kubectl create configmap default-logconf --from-file default_logconf.json
 </code>
+
+If you update a configmap, you need to redeploy the pod.
+
+<code>kubectl rollout restart deployment nginx-plus-nap </code>
+
+
