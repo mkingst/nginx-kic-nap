@@ -1,6 +1,6 @@
 # NGINX Plus KIC with NAP and DVWA
 
-# Deploy DVWA App
+# 1. Deploy DVWA App
 
 <code>kubectl create deployment dvwa --image vulnerables/web-dvwa -o yaml --dry-run</code>
 
@@ -9,16 +9,6 @@
 # 2. Build the N+ and NAP Image and install
 
 See here: https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-manifests/
-
-Push this image to a local repository.
-
-# 2. Deploy a standard NGINX Configuration  
- 
-Use the following config Map containing NGINX configuration
-<code>01nginx-config-default.yaml</code>
- 
-<b>Note: Change the syslog servers ClusterIP </b>
-
 
 # 3. Create a service for NGINX KIC (listening on port 80 by default)
  
@@ -32,6 +22,8 @@ kubectl create service nodeport nginx-ingress  --tcp=80:80,443:443
 
 # 5. Deploy App Protect Log Format, an AP Policy, Signatures, and a Kubernetes Policy
 
+Change 04waf-policy.yaml to point to the clusterIP of the syslog service we created.
+
 ```
 kubectl apply -f 01ap-logconf.yaml;
 kubectl apply -f 02dvwa-appolicy.yaml;
@@ -39,7 +31,7 @@ kubectl apply -f 03app-user-sig.yaml;
 kubectl apply -f 04waf-policy.yaml;
 ```
 
-# 6. Deploy a VirtualServer for DVWA and reference this policy
+# 6. Deploy a VirtualServer for DVWA and reference the policy above
 
 ```yaml
 apiVersion: k8s.nginx.org/v1
