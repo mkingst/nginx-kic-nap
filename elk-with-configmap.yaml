@@ -1,0 +1,93 @@
+un "sysctl -w vm.max_map_count=262144" on the nodes first
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk
+  namespace: poc-nginx-sogei
+  labels:
+    app: elk
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elk
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: elk
+        version: v1
+    spec:
+      containers:
+      - env:
+        image: sebp/elk:742
+        imagePullPolicy: IfNotPresent
+        name: elk
+        ports:
+        - containerPort: 9200
+          protocol: TCP
+        - containerPort: 5601
+          protocol: TCP
+        - containerPort: 5144
+          protocol: TCP
+        volumeMounts:
+        - name: logstash-persistent-storage
+          mountPath: /etc/logstash/conf.d/30-waf-logs-full-logstash.conf
+          subPath: 30-waf-logs-full-logstash.conf
+      volumes:
+        - name: logstash-persistent-storage
+          configMap:
+            name: elk-config
+            
+---
+## ----------------------------------------------------------------------------
+## ..:: ELK Service Configuration ::..
+##-----------------------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-9200
+  namespace: poc-nginx-sogei
+  labels:
+    app: elk
+spec:
+  type: ClusterIP
+  ports:
+  - name: elk-tcp-9200
+    port: 9200
+    protocol: TCP
+  selector:
+      app: elk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-5601
+  namespace: poc-nginx-sogei
+  labels:
+    app: elk
+spec:
+  type: NodePort
+  ports:
+  - name: elk-tcp-5601
+    port: 5601
+    protocol: TCP
+  selector:
+      app: elk
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk-5144
+  namespace: poc-nginx-sogei
+  labels:
+    app: elk
+spec:
+  type: ClusterIP
+  ports:
+  - name: elk-tcp-5144
+    port: 5144
+    protocol: TCP
+  selector:
+      app: elk
