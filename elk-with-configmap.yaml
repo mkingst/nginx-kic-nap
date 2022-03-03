@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: elk
-  namespace: poc-nginx-sogei
   labels:
     app: elk
     version: v1
