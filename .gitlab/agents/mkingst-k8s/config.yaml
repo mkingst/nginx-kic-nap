@@ -1,1 +1,3 @@
-
+gitops:
+  manifest_projects:
+  - id: mkingst/nginx-kic-nap
