@@ -42,8 +42,8 @@ metadata:
   name: dvwa-vs
 spec:
   host: dvwa.example.com
-  #policies:
-  #- name: waf-policy
+  policies:
+  - name: waf-policy
   upstreams:
   - name: dvwa 
     service: dvwa
