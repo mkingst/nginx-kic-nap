@@ -1,0 +1,19 @@
+stages:
+  - deploy
+  - remove
+
+
+deploy:
+  stage: deploy
+  image: alpine/helm:3.5.4
+  script:
+    - helm upgrade dvwa-dep ./deploy --install --namespace dvwa --create-namespace
+
+remove:
+  stage: remove
+  when: manual
+  image: alpine/helm:3.5.4
+  script:
+    - helm uninstall dvwa-dep --namespace dvwa 
+
+
